@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>본부별 링커 현황</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800;900&display=swap');
+:root{
+  --hd-blue:#003087;
+  --hd-blue2:#0F4C9A;
+  --hd-border:#ccc;
+  --hd-tborder:#ccc;
+  --hd-bg:#e8e8e8;
+  --hd-head-bg:#EEF3FA;
+  --hd-text:#222;
+  --hd-muted:#888;
+  --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:13px}
+body{
+  font-family:'Noto Sans KR','Malgun Gothic',sans-serif;
+  background:var(--hd-bg);color:var(--hd-text);line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.page{
+  max-width:794px;margin:20px auto;padding:28px 36px 40px;
+  background:var(--white);
+  box-shadow:0 4px 24px rgba(0,0,0,.16);
+}
+.page-title{
+  font-size:17px;font-weight:700;color:#111;letter-spacing:-.02em;
+  text-align:center;margin-bottom:4px;line-height:1.4;
+}
+.hd-rule{height:3px;background:var(--hd-blue);margin-bottom:1px}
+.hd-rule2{height:1px;background:var(--hd-border);margin-bottom:18px}
+.unit-note{font-size:10.5px;font-weight:600;color:var(--hd-muted);white-space:nowrap}
+.unit-note.hidden{display:none!important}
+.topbar{margin-bottom:18px}
+.topbar-in{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:6px;
+}
+.topbar-in--tier1{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.topbar-sub{
+  margin-top:10px;display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:6px;
+}
+.topbar-sub.hidden{display:none!important}
+.top-btn{
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:inherit;
+  min-height:36px;padding:5px 4px;font-size:10px;font-weight:700;color:#555;
+  border:1px solid var(--hd-border);border-radius:3px;background:#fafafa;
+  cursor:pointer;line-height:1.2;word-break:keep-all;
+}
+.top-btn:hover{background:var(--hd-head-bg);border-color:#b8cef0;color:var(--hd-blue)}
+.top-btn.primary{background:var(--hd-blue);color:#fff;border-color:var(--hd-blue)}
+.top-btn.primary:hover{background:#082a6b}
+.top-btn--home{font-weight:900;font-size:11px}
+.sec-head{
+  font-size:13.5px;font-weight:700;color:#111;margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+.panel-row .sec-head{margin-bottom:0}
+.sec-head .bar{
+  width:4px;height:15px;background:var(--hd-blue);border-radius:2px;flex-shrink:0;
+}
+.panel{margin-bottom:20px}
+.panel-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.panel-head{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:8px}
+.panel-title{font-size:13.5px;font-weight:700;color:#111;margin:0}
+.table-toolbar{display:flex;justify-content:flex-end;margin-bottom:8px}
+.hidden{display:none!important}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.hd-table{
+  width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:4px;
+}
+table.hd-table th{
+  background:var(--hd-head-bg);color:var(--hd-blue);font-weight:700;
+  padding:8px 10px;border:1px solid var(--hd-tborder);text-align:center;vertical-align:middle;
+  font-size:11px;line-height:1.5;
+}
+table.hd-table th.th-left{text-align:left}
+table.hd-table th.th-center{text-align:center}
+table.hd-table td{
+  padding:7px 10px;border:1px solid var(--hd-tborder);vertical-align:middle;
+  color:var(--hd-text);font-size:11.5px;line-height:1.5;
+}
+table.hd-table td.td-left{text-align:left}
+table.hd-table td.td-center{text-align:center}
+table.hd-table td.td-bonbu-hyeobi{color:#c62828;font-weight:700}
+table.hd-table tfoot th,table.hd-table tfoot td{
+  background:#f4f8fd;font-weight:700;border:1px solid var(--hd-tborder);
+}
+#table-summary tfoot tr.summary-foot-grand th,
+#table-summary tfoot tr.summary-foot-grand td{
+  color:#b91c1c;font-weight:800;
+  background:#fde8e8;
+}
+.summary-table{table-layout:fixed}
+.summary-table col.col-num{width:7%}
+.summary-table col.col-dept{width:33%}
+.summary-table col.col-metric{width:15%}
+.team-mini-stats{
+  display:flex;flex-wrap:wrap;align-items:stretch;justify-content:space-between;
+  gap:10px;margin-bottom:10px;
+}
+.team-mini-stats table{
+  flex:1;min-width:min(160px,100%);max-width:calc(50% - 5px);
+  margin-bottom:0;font-size:10.5px;
+}
+.team-mini-stats th,.team-mini-stats td{padding:5px 8px!important}
+.team-mini-stats th{background:#f0f4fb;color:var(--hd-blue);font-weight:700;width:52%}
+.team-mini-stats td{text-align:center;font-weight:600}
+.summary-tier-wrap{
+  display:flex;justify-content:flex-end;margin-bottom:10px;
+}
+.summary-tier-wrap .hd-table{
+  max-width:min(100%,280px);margin-bottom:0;font-size:10.5px;
+}
+.summary-tier-wrap th,.summary-tier-wrap td{padding:5px 8px!important}
+.summary-tier-wrap th{background:#f0f4fb;color:var(--hd-blue);font-weight:700;width:52%}
+.summary-tier-wrap td{text-align:center;font-weight:600}
+table.hd-table tr.summary-subtotal td,
+table.hd-table tr.summary-subtotal th{
+  background:#f0f5fc;font-weight:700;border:1px solid var(--hd-tborder);
+  color:var(--hd-text);
+}
+table.hd-table tr.summary-subtotal th.summary-subtotal-label{
+  text-align:left;color:#1a3d6e;font-size:11px;
+}
+table.hd-table tfoot tr th#summary-foot-label{
+  vertical-align:middle;
+}
+.team-table col.c0{width:6%}
+.team-table col.c1{width:18%}
+.team-table col.c2{width:46%}
+.team-table col.c3{width:15%}
+.team-table col.c4{width:15%}
+.footer-note{margin-top:18px;font-size:10.5px;color:var(--hd-muted);text-align:center}
+.team-wrap{
+  width:100%;max-width:100%;overflow-x:hidden;
+  container-type:inline-size;container-name:teamtbl;
+}
+.team-table{table-layout:fixed;width:100%;max-width:100%}
+/* 열 너비 고정(colgroup), 가로 확장 없음 — 글자만 작아짐 */
+table.hd-table.team-table{
+  font-size:clamp(6.5px, 0.52rem + 1.05vw, 11px);
+}
+@supports (font-size:1cqw){
+  table.hd-table.team-table{
+    font-size:clamp(6.5px, min(2.65cqw, 0.52rem + 0.9vw), 11px);
+  }
+}
+table.hd-table.team-table th,
+table.hd-table.team-table td{
+  font-size:inherit;
+  padding:5px 5px;
+  overflow:hidden;
+  word-break:break-word;
+  line-height:1.35;
+}
+@media (max-width:720px){
+  .page{margin:12px;padding:18px 14px 28px}
+  .top-btn{font-size:9px;min-height:34px}
+}
+@media (max-width:480px){
+  .top-btn{font-size:8.5px;min-height:32px;padding:4px 2px}
+}
+</style>
+<!-- 엑셀 시트 원본: python run_linker_extract.py 실행 시 아래 textarea 내용이 자동으로 채워집니다.
+     (links: 갑지 시트 → embed-linker-summary, 링커 대상 팀 시트(F열='O', B/D/E/G만) → embed-linker-teams) -->
+<textarea id="embed-linker-summary" style="display:none" aria-hidden="true">{"sheetName": "갑지", "rows": [["토목사업본부", 2, 18, 17, 1], ["건축주택사업본부", 3, 31, 27, 4], ["플랜트사업본부", 2, 29, 29, 0], ["NewEnergy사업부", 3, 10, 10, 0], ["안전품질본부", 3, 20, 20, 0], ["개발사업부", 2, 11, 11, 0], ["글로벌사업부", 3, 6, 6, 0], ["기술연구원", 2, 12, 12, 0], ["PI본부", 2, 10, 10, 0], ["재경본부", 3, 18, 18, 0], ["경영지원본부", 2, 19, 19, 0], ["전략기획사업부", 1, 4, 4, 0], ["감사실", 0, 3, 3, 0], ["GBC개발사업단", 0, 4, 4, 0], ["토목사업본부(국내)", 0, 32, 23, 9], ["건축주택사업본부(국내)", 1, 62, 58, 4], ["플랜트사업본부(국내)", 0, 1, 1, 0], ["NewEnergy사업부(국내)", 0, 3, 3, 0], ["개발사업부(국내)", 0, 0, 0, 0], ["토목사업본부(해외)", 0, 12, 12, 0], ["건축주택사업본부(해외)", 0, 5, 4, 1], ["플랜트사업본부(해외)", 1, 12, 10, 2], ["NewEnergy사업부(해외)", 0, 9, 9, 0]]}</textarea>
+<textarea id="embed-linker-teams" style="display:none" aria-hidden="true">{"sheetName": "링커 대상 팀", "matrix": [["본부", "팀명", "담당 ACE", "링커 담당"], ["재경본부", "IR팀", "남재열 매니저", "조동현 매니저"], ["재경본부", "지속가능경영팀", "남재열 매니저", "서정태 매니저"], ["경영지원본부", "보안운영실", "김민우 매니저", "이광연 매니저"], ["토목사업본부", "토목경영지원팀", "오상욱 책임", "박강욱 책임"], ["토목사업본부", "토목품질팀", "오상욱 책임", "이민형 책임"], ["토목사업본부", "토목계약관리팀", "오상욱 책임", "박준환 매니저"], ["토목사업본부", "토목안전협력팀", "오상욱 책임", "우현수 책임"], ["토목사업본부", "토목NFS팀", "오상욱 책임", "채현 매니저"], ["토목사업본부", "토목예산팀", "오상욱 책임", "김건웅 책임"], ["토목사업본부", "토목국내영업팀", "오상욱 책임", "주민재 책임"], ["토목사업본부", "토목해외영업팀", "오상욱 책임", "김영빈 책임"], ["토목사업본부", "해상풍력사업팀", "오상욱 책임", ""], ["토목사업본부", "토목민자사업팀", "오상욱 책임", "정연성 팀장"], ["토목사업본부", "토목국내견적팀", "김현종 책임", "박장식 책임"], ["토목사업본부", "토목해외견적1팀", "김현종 책임", "김지호 책임"], ["토목사업본부", "토목해외견적2팀", "김현종 책임", "윤태진 책임"], ["토목사업본부", "토목건축기전팀", "김현종 책임", "김종열 책임"], ["토목사업본부", "토목지하공간설계팀", "김현종 책임", "박병관 매니저"], ["토목사업본부", "토목교량설계팀", "김현종 책임", "진경민 책임"], ["토목사업본부", "토목해양항만설계팀", "김현종 책임", "김호준 책임"], ["토목사업본부", "토목인프라설계팀", "김현종 책임", "류용준 책임"], ["건축주택사업본부", "건축사업팀", "신형구 매니저", "정택원 매니저"], ["건축주택사업본부", "건축설계팀", "신형구 매니저", "장재용 매니저"], ["건축주택사업본부", "글로벌데이터센터팀", "신형구 매니저", "이창섭 매니저"], ["건축주택사업본부", "건축주택설비팀", "신형구 매니저", "윤상진 책임"], ["건축주택사업본부", "건축주택전기통신팀", "신형구 매니저", "이재두 책임"], ["건축주택사업본부", "건축주택토목팀", "신형구 매니저", "신정무 책임"], ["건축주택사업본부", "건축국내견적팀", "신형구 매니저", "한준형 책임"], ["건축주택사업본부", "건축해외견적팀", "신형구 매니저", "성민수 매니저"], ["건축주택사업본부", "주택견적팀", "신형구 매니저", "이서현 매니저"], ["건축주택사업본부", "주택설계팀", "신형구 매니저", "이준열 매니저"], ["건축주택사업본부", "익스테리어팀", "신형구 매니저", "김소영 매니저"], ["건축주택사업본부", "인테리어팀", "신형구 매니저", "남궁찬우 매니저"], ["건축주택사업본부", "브랜드마케팅팀", "최형택 책임", "이동훈 책임"], ["건축주택사업본부", "주택분양팀", "최형택 책임", "팽윤 책임"], ["건축주택사업본부", "민간사업관리팀", "최형택 책임", "이상민 매니저"], ["건축주택사업본부", "도시미래가치사업기획팀", "최형택 책임", ""], ["건축주택사업본부", "도시미래가치사업1팀", "최형택 책임", ""], ["건축주택사업본부", "도시미래가치사업2팀", "최형택 책임", "이민구 매니저"], ["건축주택사업본부", "압구정재건축사업팀", "최형택 책임", ""], ["건축주택사업본부", "도시미래가치사업3팀", "오양가 매니저", ""], ["건축주택사업본부", "도시미래가치사업4팀", "오양가 매니저", "유태열 책임"], ["건축주택사업본부", "도시미래가치구현1팀", "오양가 매니저", "정영찬 책임"], ["건축주택사업본부", "도시미래가치구현2팀", "오양가 매니저", "이임규 책임"], ["건축주택사업본부", "더뉴하우스팀", "오양가 매니저", "박철민 책임"], ["건축주택사업본부", "건축주택경영지원팀", "오양가 매니저", "박진수 책임"], ["건축주택사업본부", "건축주택예산팀", "오양가 매니저", "양성익 책임"], ["건축주택사업본부", "건축주택수익성개선팀", "오양가 매니저", "이현우 매니저"], ["건축주택사업본부", "건축주택수행팀", "최형택 책임", "최우선 매니저"], ["건축주택사업본부", "건축주택품질팀", "최형택 책임", "이송은 책임"], ["건축주택사업본부", "건축주택프리콘팀", "최형택 책임", "조성경 책임"], ["건축주택사업본부", "건축주택안전협력팀", "최형택 책임", "최유청 매니저"], ["플랜트사업본부", "플랜트경영지원팀", "장재원 팀장", "문성욱 책임"], ["플랜트사업본부", "플랜트스마트솔루션팀", "장재원 팀장", "하태양 책임"], ["플랜트사업본부", "플랜트수익성개선팀", "장재원 팀장", "김종빈 책임"], ["플랜트사업본부", "오일&가스영업팀", "장재원 팀장", "이윤호 책임"], ["플랜트사업본부", "기자재견적팀", "장재원 팀장", "안준형 매니저"], ["플랜트사업본부", "SAF사업추진팀(S)", "장재원 팀장", "이주원 매니저"], ["플랜트사업본부", "플랜트구매품질팀", "장재원 팀장", "강태준 책임"], ["플랜트사업본부", "플랜트구매지원팀", "장재원 팀장", "장찬 매니저"], ["플랜트사업본부", "GX수소암모니아영업팀", "장재원 팀장", "조상호 책임"], ["플랜트사업본부", "수전해사업개발팀", "장재원 팀장", "강충범 책임"], ["플랜트사업본부", "플랜트시운전팀", "장재원 팀장", "정인재 책임"], ["플랜트사업본부", "플랜트수행팀", "장재원 팀장", "김준형 책임"], ["플랜트사업본부", "플랜트기계배관견적팀", "이제욱 매니저", "강서구 팀장"], ["플랜트사업본부", "플랜트토목건축견적팀", "이제욱 매니저", "민환석 책임"], ["플랜트사업본부", "플랜트전기계장견적팀", "이제욱 매니저", "이창열 책임"], ["플랜트사업본부", "플랜트품질팀", "이제욱 매니저", "이경빈 책임"], ["플랜트사업본부", "플랜트안전협력팀", "이제욱 매니저", "안성균 팀장"], ["플랜트사업본부", "플랜트설계관리팀", "이제욱 매니저", "김상현 책임"], ["플랜트사업본부", "플랜트배관설계팀", "이제욱 매니저", "김석권 책임"], ["플랜트사업본부", "NewEnergy설계팀", "이제욱 매니저", "이승원 책임"], ["플랜트사업본부", "플랜트설계검증팀", "이제욱 매니저", "이제훤 책임"], ["플랜트사업본부", "플랜트토목설계팀", "이제욱 매니저", "이시웅 매니저"], ["플랜트사업본부", "플랜트건축설계팀", "이제욱 매니저", "김현석 책임"], ["플랜트사업본부", "플랜트전기설계팀", "이제욱 매니저", "정교헌 책임"], ["플랜트사업본부", "플랜트계장설계팀", "이제욱 매니저", "문기홍 책임"], ["플랜트사업본부", "플랜트공정설계팀", "이제욱 매니저", "배완섭 책임"], ["플랜트사업본부", "플랜트HSE설계팀", "이제욱 매니저", "장승필 책임"], ["플랜트사업본부", "플랜트회전기계설계팀", "이제욱 매니저", "남형식 책임"], ["플랜트사업본부", "플랜트장치기계설계팀", "이제욱 매니저", "심승보 책임"], ["NewEnergy사업부", "NewEnergy전략팀", "김주현 책임", "임지현 매니저"], ["NewEnergy사업부", "NewEnergy기획팀", "김주현 책임", "한주노 매니저"], ["NewEnergy사업부", "원자력수행팀", "김주현 책임", "전성배 책임"], ["NewEnergy사업부", "북미 SMR 팀", "사비나 매니저", "박종화 책임"], ["NewEnergy사업부", "원자력영업팀", "사비나 매니저", "왕수창 책임"], ["NewEnergy사업부", "원자력견적팀", "사비나 매니저", "김영민 책임"], ["NewEnergy사업부", "본사 : NBX팀(S)", "사비나 매니저", "송창훈 매니저"], ["NewEnergy사업부", "신재생사업팀", "최창엽 책임", "박주영 매니저"], ["NewEnergy사업부", "ECO-Grid영업팀", "최창엽 책임", "ANGELAKOVA VIKTORIYA ANGELOVA 매니저"], ["NewEnergy사업부", "ECO-One수행팀", "최창엽 책임", "김국진 책임"], ["안전품질본부", "안전품질전략팀", "유병찬 책임", "임지환 책임"], ["안전품질본부", "안전기획팀", "유병찬 책임", "김정환 매니저"], ["안전품질본부", "안전시스템운영팀", "유병찬 책임", "강한솔 매니저"], ["안전품질본부", "안전예산팀", "유병찬 책임", "소재호 매니저"], ["안전품질본부", "안전수행평가팀", "유병찬 책임", "이종훈 책임"], ["안전품질본부", "안전진단팀", "배종호 책임", "서덕현 매니저"], ["안전품질본부", "장비안전팀", "배종호 책임", "김광민 책임"], ["안전품질본부", "안전패트롤팀", "배종호 책임", "박준영 책임"], ["안전품질본부", "환경관리팀", "배종호 책임", "이현창 책임"], ["안전품질본부", "품질기획팀", "이규친 책임", "성수진 책임"], ["안전품질본부", "품질진단팀", "이규친 책임", "이은범 책임"], ["안전품질본부", "품질시스템운영팀", "이규친 책임", "주동훈 책임"], ["안전품질본부", "H서비스지원팀", "이규친 책임", "김나영 매니저"], ["안전품질본부", "H서비스High-End주거관리팀", "이규친 책임", "김동준 매니저"], ["안전품질본부", "H서비스High-Tech건축관리팀", "이규친 책임", "박상문 매니저"], ["안전품질본부", "H서비스신속대응팀", "이규친 책임", "한기태 매니저"], ["안전품질본부", "H서비스동부팀", "이규친 책임", "이경원 매니저"], ["안전품질본부", "H서비스서부팀", "이규친 책임", "김성호 매니저"], ["안전품질본부", "H서비스중부팀", "이규친 책임", "김동연 매니저"], ["안전품질본부", "H서비스남부팀", "이규친 책임", "전지환 매니저"], ["개발사업부", "에셋Biz팀", "김량헌 책임", "이승준 책임"], ["개발사업부", "서산태안Biz팀", "김량헌 책임", "유승준 책임"], ["개발사업부", "송파복정추진팀(S)", "김량헌 책임", "이원진 매니저"], ["개발사업부", "New-Biz기획팀", "김량헌 책임", "이형창 책임"], ["개발사업부", "에너지환경Biz팀", "김량헌 책임", "박진섭 책임"], ["개발사업부", "인프라Biz팀", "김량헌 책임", "손진식 매니저"], ["개발사업부", "에너지플랫폼Biz팀", "우찬희 매니저", "이동선 책임"], ["개발사업부", "개발금융Biz팀", "우찬희 매니저", "김대호 책임"], ["개발사업부", "민간Biz1팀", "우찬희 매니저", "조정호 책임"], ["개발사업부", "민간Biz2팀", "우찬희 매니저", "최명렬 매니저"], ["개발사업부", "민간Biz3팀", "우찬희 매니저", "김수환 매니저"], ["글로벌사업부", "글로벌기획팀", "서종익 책임", "HAMED AYEH 매니저"], ["글로벌사업부", "글로벌마케팅팀", "서종익 책임", "김학재 책임"], ["글로벌사업부", "글로벌에너지인프라개발팀", "박현주 매니저", "OZ SEYMA 매니저"], ["글로벌사업부", "글로벌건축주택개발팀", "박현주 매니저", "박동우 책임"], ["글로벌사업부", "대외정책협력팀", "조준현 매니저", "박진현 책임"], ["글로벌사업부", "국내사업협력팀", "조준현 매니저", "김창열 매니저"], ["기술연구원", "연구기획팀", "양제윤 책임", "이은주 책임"], ["기술연구원", "연구관리팀", "양제윤 책임", "이기륜 책임"], ["기술연구원", "자원순환연구팀", "양제윤 책임", "김슬기 책임연구원"], ["기술연구원", "탄소포집활용연구팀", "양제윤 책임", "진상준 책임연구원"], ["기술연구원", "수소에너지연구팀", "양제윤 책임", "박현주 책임연구원"], ["기술연구원", "에너지수송저장연구팀", "양제윤 책임", "박종식 책임연구원"], ["기술연구원", "주거환경연구팀", "김경태 책임연구원", "최민지 책임연구원"], ["기술연구원", "로보틱스&OSC연구팀", "김경태 책임연구원", "문병욱 책임연구원"], ["기술연구원", "DX연구팀", "김경태 책임연구원", "구나혜 연구원"], ["기술연구원", "지하공간인프라연구팀", "김경태 책임연구원", "임창근 책임연구원"], ["기술연구원", "모빌리티인프라연구팀", "김경태 책임연구원", "정민수 연구원"], ["기술연구원", "해양항만인프라연구팀", "김경태 책임연구원", "이정욱 책임연구원"], ["PI본부", "PI운영개선팀", "김병주 매니저", "오수희 책임"], ["PI본부", "PI상생리스크관리팀", "김병주 매니저", "한성협 책임"], ["PI본부", "통합PI팀", "김병주 매니저", "조현우 책임"], ["PI본부", "회전장치PI팀", "김병주 매니저", "윤태범 책임"], ["PI본부", "전기계장PI팀", "김병주 매니저", "장효만 책임"], ["PI본부", "토목PI팀", "이석형 책임", "한동한 책임"], ["PI본부", "물류운영팀", "이석형 책임", "금나현 책임"], ["PI본부", "건축구조PI팀", "이석형 책임", "김학래 책임"], ["PI본부", "건축마감PI팀", "이석형 책임", "이호영 책임"], ["PI본부", "건축기전PI팀", "이석형 책임", "오현철 책임"], ["재경본부", "재정팀", "남재열 매니저", "이준휘 책임"], ["재경본부", "경영분석팀", "남재열 매니저", "장희원 매니저, 이소윤 매니저"], ["재경본부", "금융팀", "남재열 매니저", "김도연 매니저"], ["재경본부", "PF사업지원팀", "남재열 매니저", "류태석 책임"], ["재경본부", "회계팀", "정성훈 매니저", "박수홍 매니저"], ["재경본부", "세무팀", "정성훈 매니저", "전준영 매니저"], ["재경본부", "예산기획팀", "정성훈 매니저", "최다희 책임"], ["재경본부", "수주예산팀", "정성훈 매니저", "윤윤진 책임"], ["재경본부", "수행예산팀", "정성훈 매니저", "신민규 책임"], ["재경본부", "사업관리팀", "나현수 매니저", "이의현 매니저"], ["재경본부", "토목지원팀", "나현수 매니저", "강승준 매니저"], ["재경본부", "건축주택지원팀", "나현수 매니저", "김준수 매니저"], ["재경본부", "플랜트NewEnergy지원팀", "나현수 매니저", "오헌재 책임"], ["재경본부", "공정RM팀", "나현수 매니저", "김창섭 책임"], ["재경본부", "재경기획팀", "나현수 매니저", "김동우 매니저"], ["경영지원본부", "국내토목플랜트법무팀", "이정민 책임", "박수지 매니저"], ["경영지원본부", "국내건축주택법무팀", "이정민 책임", "고지혜 매니저"], ["경영지원본부", "컴플라이언스팀", "이정민 책임", "한용희 매니저"], ["경영지원본부", "해외토목건축법무팀", "이정민 책임", "오영재 책임"], ["경영지원본부", "해외플랜트NewEnergy법무팀", "이정민 책임", "신대용 책임"], ["경영지원본부", "PR기획팀", "이정민 책임", "이영주 책임"], ["경영지원본부", "언론PR팀", "이정민 책임", "김법수 매니저"], ["경영지원본부", "V-Supporters Team", "이정민 책임", "고승현 팀장"], ["경영지원본부", "비즈니스지원팀", "이정민 책임", "윤용준 매니저, 유진걸 책임"], ["경영지원본부", "워크앤라이프지원팀", "이정민 책임", "고영우 책임"], ["경영지원본부", "인사기획팀", "김민우 매니저", "이승윤 매니저"], ["경영지원본부", "인력운영팀", "김민우 매니저", "조경민 매니저"], ["경영지원본부", "인사지원팀", "김민우 매니저", "이봉훈 책임"], ["경영지원본부", "HR개선팀", "김민우 매니저", "노휘영 매니저"], ["경영지원본부", "기술교육팀", "김민우 매니저", "이재호 매니저"], ["경영지원본부", "IT지원팀", "김민우 매니저", "권준호 책임"], ["경영지원본부", "AX플랫폼팀", "김민우 매니저", "박종현 책임"], ["전략기획사업부", "경영기획팀", "서라벌 책임", "EREGZEN EGSHIGLEN 매니저"], ["전략기획사업부", "전략인텔리전스팀", "서라벌 책임", "서현덕 책임"], ["전략기획사업부", "투자인텔리전스팀", "서라벌 책임", "민윤건 책임"], ["전략기획사업부", "컬처디자인랩", "서라벌 책임", "김현지 책임"], ["감사실", "감사1팀", "AI디자인랩", "김동수 책임"], ["감사실", "감사2팀", "AI디자인랩", "신순호 책임"], ["감사실", "감사기획팀", "AI디자인랩", "최성호 책임"], ["GBC개발사업단", "GBC사업기획팀", "AI디자인랩", "김용준 책임"], ["GBC개발사업단", "GBC사업추진팀", "AI디자인랩", "윤정호 책임"], ["GBC개발사업단", "GBC설계관리팀", "AI디자인랩", "정진우 책임"], ["GBC개발사업단", "GBC건설관리팀", "AI디자인랩", "윤진호 책임"], ["토목사업본부(국내)", "19-대미-왜관전기시설 개선 시설공사", "오상욱책임", "최성우 책임"], ["토목사업본부(국내)", "강북정수장 증설공사", "오상욱책임", "송재혁 매니저"], ["토목사업본부(국내)", "검단~경명로간 도로신설 및 인천공항고속도로 연결도로 건설공사", "오상욱책임", "최민준 책임"], ["토목사업본부(국내)", "경부고속선 안전취약개소(대전북연결선) 제2공구", "오상욱책임", "한승종 책임"], ["토목사업본부(국내)", "고속국도 제400호선 김포~파주간 건설공사(제2공구)", "오상욱책임", "박서영 책임"], ["토목사업본부(국내)", "공공기여 대상사업 직접제공시설공사 1공구", "오상욱책임", ""], ["토목사업본부(국내)", "공공기여 대상사업 직접제공시설공사 2공구", "오상욱책임", ""], ["토목사업본부(국내)", "광양항 광역 준설토투기장 조성공사", "오상욱책임", "장지환 책임"], ["토목사업본부(국내)", "군산항 준설토 투기장(1공구)", "오상욱책임", "한철희 책임"], ["토목사업본부(국내)", "남양주왕숙 공공주택지구 조성공사 1공구", "오상욱책임", "김민정 매니저"], ["토목사업본부(국내)", "남양주왕숙 국도47호선 이설(지하화) 공사", "오상욱책임", "장규식 책임"], ["토목사업본부(국내)", "대장~홍대 광역철도 민간투자사업 1공구", "오상욱책임", "김태훈 매니저"], ["토목사업본부(국내)", "대장~홍대 광역철도 민간투자사업 4공구", "오상욱책임", "김태균 팀장"], ["토목사업본부(국내)", "대장~홍대 광역철도 민간투자사업 사업단", "오상욱책임", "최영우 책임"], ["토목사업본부(국내)", "동부간선도로 지하화 민간투자사업 건설공사 3공구", "오상욱책임", "조항현 매니저"], ["토목사업본부(국내)", "부산 에코델타시티 3단계 제3공구 조성공사", "오상욱책임", "이현우 책임"], ["토목사업본부(국내)", "부산진해경제자유구역 와성지구 개발사업", "오상욱책임", "최영환 매니저"], ["토목사업본부(국내)", "부산항 진해신항 남방파제(1단계)", "김현종 책임", "임형택 책임"], ["토목사업본부(국내)", "부산항 진해신항 컨테이너부두 1-1단계(1공구) 축조공사", "김현종 책임", "김병준 책임"], ["토목사업본부(국내)", "서산 현대차 직선주행시험로 기반시설", "오상욱책임", ""], ["토목사업본부(국내)", "수도권광역급행철도 B노선 민간투자사업 건설공사 제4공구", "김현종 책임", "김재원 책임"], ["토목사업본부(국내)", "수도권광역급행철도 B노선(용산~상봉) 제1공구 노반신설 기타공사", "김현종 책임", "정지환 매니저"], ["토목사업본부(국내)", "신안우이 해상풍력 발전사업", "김현종 책임", "고경범 팀장"], ["토목사업본부(국내)", "영동대로 지하공간 복합개발 2공구 건설공사", "김현종 책임", ""], ["토목사업본부(국내)", "영동대로 지하공간 복합개발 3공구 건설공사", "김현종 책임", ""], ["토목사업본부(국내)", "울산신항 남방파제(1-2공구) 보강공사", "김현종 책임", "김형진 책임"], ["토목사업본부(국내)", "월곶~판교 복선전철 제6공구 건설공사", "김현종 책임", ""], ["토목사업본부(국내)", "인천계양 국도39호선(벌말로) 확장공사(부천·서울)", "김현종 책임", "김경동 책임"], ["토목사업본부(국내)", "태안기업도시 기반시설공사(4차)", "김현종 책임", "이석호 매니저"], ["토목사업본부(국내)", "하남감일 공공주택지구 조성사업", "김현종 책임", ""], ["건축주택사업본부(국내)", "GBC시공단", "신형구 매니저", "이성윤 책임"], ["건축주택사업본부(국내)", "ICN062 DC", "신형구 매니저", "구본일 매니저"], ["건축주택사업본부(국내)", "PUS05 DC", "신형구 매니저", "곽재현 매니저"], ["건축주택사업본부(국내)", "S프로젝트", "신형구 매니저", "김도영 매니저"], ["건축주택사업본부(국내)", "강릉 공군 엄체호 시설공사", "신형구 매니저", "이광연 책임"], ["건축주택사업본부(국내)", "고려대 자연계 중앙광장", "신형구 매니저", "김효 매니저"], ["건축주택사업본부(국내)", "과천 8,9단지 재건축", "신형구 매니저", "윤대원 매니저"], ["건축주택사업본부(국내)", "광명11R 재개발", "신형구 매니저", "권민석 책임"], ["건축주택사업본부(국내)", "광명5R 재개발", "신형구 매니저", "윤태준 매니저"], ["토목사업본부(국내)", "계양~강화 고속국도 건설공사(제5공구)_T08A", "김현종 책임", ""], ["토목사업본부(국내)", "포천양수발전소 1,2호기 토건공사_T09A", "김현종 책임", ""], ["건축주택사업본부(국내)", "구로 항동 DC", "신형구 매니저", "김규남 매니저"], ["건축주택사업본부(국내)", "대조제1구역 주택재개발", "신형구 매니저", "조영선 매니저"], ["건축주택사업본부(국내)", "더 파크사이드 서울", "신형구 매니저", "곽채은 매니저"], ["건축주택사업본부(국내)", "더현대 광주", "신형구 매니저", "전건우 매니저"], ["건축주택사업본부(국내)", "디에이치 르피크", "신형구 매니저", "윤상윤 매니저"], ["건축주택사업본부(국내)", "디에이치 방배", "신형구 매니저", "이학연 매니저"], ["건축주택사업본부(국내)", "디에이치 아델스타", "신형구 매니저", "김가은 매니저"], ["건축주택사업본부(국내)", "디에이치 클래스트", "신형구 매니저", "이상명 책임"], ["건축주택사업본부(국내)", "라브르 27", "신형구 매니저", "우준식 매니저"], ["건축주택사업본부(국내)", "마곡 더그리드", "신형구 매니저", "김수민 매니저"], ["건축주택사업본부(국내)", "마천4구역 주택재개발", "최형택 책임", "박주원 매니저"], ["건축주택사업본부(국내)", "밀레니엄 힐튼호텔 부지 개발사업", "최형택 책임", "공병화 매니저"], ["건축주택사업본부(국내)", "배곧서울대학교병원", "최형택 책임", "이형주 책임"], ["건축주택사업본부(국내)", "복정역세권 복합 2BL", "최형택 책임", "신지창 매니저"], ["건축주택사업본부(국내)", "부산 범천1-1구역 재개발", "최형택 책임", "유세현 매니저"], ["건축주택사업본부(국내)", "성원애드피아 하남 신사옥", "최형택 책임", "곽인규 매니저"], ["건축주택사업본부(국내)", "시티오씨엘 6단지", "최형택 책임", "최용현 매니저"], ["건축주택사업본부(국내)", "아페르 파크", "최형택 책임", ""], ["건축주택사업본부(국내)", "안산 성곡동 DC", "최형택 책임", "박병홍 매니저"], ["건축주택사업본부(국내)", "양산 물금 공동주택", "최형택 책임", "김영진 매니저"], ["건축주택사업본부(국내)", "영동대로 지하공간 복합개발 2공구(건축,시스템)", "최형택 책임", "임동혁 매니저"], ["건축주택사업본부(국내)", "인천 산곡6구역 재개발", "최형택 책임", "조민도 매니저"], ["건축주택사업본부(국내)", "잠실주경기장 리모델링", "최형택 책임", "권순철 매니저"], ["건축주택사업본부(국내)", "제주 이도주공 2,3단지 재건축", "최형택 책임", "송광근 책임"], ["건축주택사업본부(국내)", "팀북투 DC", "최형택 책임", "문한솔 매니저"], ["건축주택사업본부(국내)", "평택 고덕 A31BL 공동주택", "최형택 책임", "이윤주 매니저"], ["건축주택사업본부(국내)", "평택 고덕 A34,35BL 공동주택", "최형택 책임", "김민정 책임"], ["건축주택사업본부(국내)", "흑석9구역 재개발", "오양가 매니저", ""], ["건축주택사업본부(국내)", "힐스테이트 DMC역", "오양가 매니저", "강영인 매니저"], ["건축주택사업본부(국내)", "힐스테이트 가야", "오양가 매니저", "박현석 매니저"], ["건축주택사업본부(국내)", "힐스테이트 가장더퍼스트", "오양가 매니저", ""], ["건축주택사업본부(국내)", "힐스테이트 도안리버파크 1단지(5BL)", "오양가 매니저", "김의준 매니저"], ["건축주택사업본부(국내)", "힐스테이트 도안리버파크 2단지(4BL)", "오양가 매니저", "송하일 매니저"], ["건축주택사업본부(국내)", "힐스테이트 도안리버파크 3단지(2BL)", "오양가 매니저", "김채영 매니저"], ["건축주택사업본부(국내)", "힐스테이트 도안리버파크 5단지(1BL)", "오양가 매니저", "김혁진 팀장"], ["건축주택사업본부(국내)", "힐스테이트 동작시그니처", "이민규 매니저", "이영규 매니저"], ["건축주택사업본부(국내)", "힐스테이트 둔산", "이민규 매니저", "김민영 매니저"], ["건축주택사업본부(국내)", "힐스테이트 등촌역", "이민규 매니저", "박준흠 매니저"], ["건축주택사업본부(국내)", "힐스테이트 레이크 송도 5차", "이민규 매니저", "김우진 매니저"], ["건축주택사업본부(국내)", "힐스테이트 마포더퍼스트", "이민규 매니저", "정우근 매니저"], ["건축주택사업본부(국내)", "힐스테이트 불당 더원", "이민규 매니저", "김유리 매니저"], ["건축주택사업본부(국내)", "힐스테이트 사직아시아드", "이민규 매니저", "안지호 매니저"], ["건축주택사업본부(국내)", "힐스테이트 선암호수공원", "이민규 매니저", "임태욱 매니저"], ["건축주택사업본부(국내)", "힐스테이트 선화 더와이즈", "이민규 매니저", "김성민 매니저"], ["건축주택사업본부(국내)", "힐스테이트 송도센터파크", "이민규 매니저", "임태민 책임"], ["건축주택사업본부(국내)", "힐스테이트 어울림 청주사직", "이민규 매니저", "윤준호 매니저"], ["건축주택사업본부(국내)", "힐스테이트 용인마크밸리", "이민규 매니저", "장은영 매니저"], ["건축주택사업본부(국내)", "힐스테이트 유천 더와이즈", "이민규 매니저", "박종혁 책임"], ["건축주택사업본부(국내)", "힐스테이트 이수역센트럴", "이민규 매니저", "조수민 매니저"], ["건축주택사업본부(국내)", "힐스테이트 이천역 2단지", "이민규 매니저", "곽성호 매니저"], ["건축주택사업본부(국내)", "힐스테이트 죽림더프라우드", "이민규 매니저", ""], ["건축주택사업본부(국내)", "힐스테이트 천안역 스카이움", "이민규 매니저", "이현준 책임"], ["건축주택사업본부(국내)", "힐스테이트 평택역센트럴시티", "이민규 매니저", "원현섭 매니저"], ["플랜트사업본부(국내)", "샤힌 에틸렌시설 건설공사 PKG1", "이제욱 매니저", "박수형 책임"], ["NewEnergy사업부(국내)", "동해안-신가평 HVDC 송전선공사", "김주현 책임", "성연복 매니저"], ["NewEnergy사업부(국내)", "수출용신형연구로 건설공사", "김주현 책임", "박종영 책임"], ["NewEnergy사업부(국내)", "신한울원자력 3_4호기", "김주현 책임", "이병근 책임"], ["토목사업본부(해외)", "미국 전기로 제철소 부지조성 공사", "오상욱 책임", "연제웅 매니저"], ["토목사업본부(해외)", "베트남 하노이 메트로 3호선 CP03", "오상욱 책임", "김성문 책임"], ["토목사업본부(해외)", "싱가포르 남북도로(NSC) N113,N115 건설 공사", "오상욱 책임", "신유진 책임"], ["토목사업본부(해외)", "싱가포르 테콩섬 매립공사 2단계 공사", "오상욱 책임", "정재욱 책임"], ["토목사업본부(해외)", "싱가포르 투아스 핑거3 매립공사", "오상욱 책임", "김동현 매니저"], ["토목사업본부(해외)", "이라크 해수처리시설 부지조성 공사", "오상욱 책임", "심호성 책임"], ["토목사업본부(해외)", "인도네시아 Peusangan 수력발전소 공사", "김현종 책임", "홍창원 책임"], ["토목사업본부(해외)", "칠레 차카오 교량 공사", "김현종 책임", "신묵 매니저"], ["토목사업본부(해외)", "쿠웨이트 슈와이크 항만 개보수 공사", "김현종 책임", "진형철 매니저"], ["토목사업본부(해외)", "파나마 메트로 3호선", "김현종 책임", "박재현 매니저"], ["토목사업본부(해외)", "필리핀 남부철도 제4,5,6공구", "김현종 책임", "정민근 매니저"], ["토목사업본부(해외)", "필리핀 남북철도 제1공구", "김현종 책임", "현지열 책임"], ["건축주택사업본부(해외)", "사우디 CKD 공장", "오양가 매니저", "이지한 매니저"], ["건축주택사업본부(해외)", "싱가포르 쇼타워", "오양가 매니저", ""], ["건축주택사업본부(해외)", "싱가포르 풍골 스포츠센터", "오양가 매니저", "문성환 책임"], ["건축주택사업본부(해외)", "카타르 루사일 타워", "오양가 매니저", "신민호 매니저"], ["건축주택사업본부(해외)", "홍콩 유나이티드 크리스천 병원", "오양가 매니저", "이승기 매니저"], ["플랜트사업본부(해외)", "미국 전기로 제철소 건설공사", "고원준 책임", "조현빈 매니저"], ["플랜트사업본부(해외)", "베트남 꽝짝1 1,400MW 화력발전소 공사", "고원준 책임", "이정우 매니저"], ["플랜트사업본부(해외)", "사우디 마잔 가스처리 공장 부대시설공사", "고원준 책임", "남상윤 매니저"], ["플랜트사업본부(해외)", "사우디 마잔 오일처리 시설 신설 및 확장공사", "고원준 책임", ""], ["플랜트사업본부(해외)", "사우디 아미랄 유틸리티 및 부대시설 공사 (PKG4)", "고원준 책임", "나한솔 책임"], ["플랜트사업본부(해외)", "사우디 자푸라 II 유틸리티 및 부대공사 (PKG2)", "고원준 책임", "손원태 매니저"], ["플랜트사업본부(해외)", "사우디 자푸라 유틸리티 및 부대시설 공사", "고원준 책임", ""], ["플랜트사업본부(해외)", "알제리 우마쉐3 1,300MW 복합화력발전소", "고원준 책임", "남상훈 책임"], ["플랜트사업본부(해외)", "이라크 바스라 정유공장 고도화설비 공사", "고원준 책임", "이승일 책임"], ["플랜트사업본부(해외)", "이라크 카르발라 정유공장", "고원준 책임", "한상호 책임"], ["플랜트사업본부(해외)", "이라크 해수처리시설 공사", "고원준 책임", "민주원 매니저"], ["플랜트사업본부(해외)", "파푸아 LNG 기본설계 공사", "고원준 책임", "최민석 매니저"], ["NewEnergy사업부(해외)", "UAE 원전 건설공사", "최창엽 책임", "김민상 책임"], ["NewEnergy사업부(해외)", "루마니아 CTRF 신축공사", "최창엽 책임", "신주연 매니저"], ["NewEnergy사업부(해외)", "루마니아 체르나보다 설비개선공사", "최창엽 책임", "이창진 매니저"], ["NewEnergy사업부(해외)", "미얀마 500kV 변전소 Ph.1 공사", "최창엽 책임", "이충헌 책임"], ["NewEnergy사업부(해외)", "불가리아 코즐로두이 원전 7,8호기 설계공사", "사비나 매니저", "이준기 매니저"], ["NewEnergy사업부(해외)", "사우디 NIC South - YCNT HVDC 송전(P1)", "사비나 매니저", "안정환 책임"], ["NewEnergy사업부(해외)", "사우디 리야드-쿠드미 500kV HVDC 송전선로 공사(1공구)", "사비나 매니저", "이상열 매니저"], ["NewEnergy사업부(해외)", "사우디 쿨리스 380kV 송전공사", "사비나 매니저", "고강균 매니저"], ["NewEnergy사업부(해외)", "사우디 후마지 380kV 송전공사", "사비나 매니저", "한상훈 매니저"]]}</textarea>
+</head>
+<body>
+<div class="page">
+  <h1 class="page-title">본부별 링커 현황</h1>
+  <div class="hd-rule"></div>
+  <div class="hd-rule2"></div>
+  <div class="topbar">
+    <div class="topbar-in topbar-in--tier1" id="nav-tier1" role="tablist" aria-label="본사·국내·해외 구분"></div>
+    <div class="topbar-sub hidden" id="nav-tier2" role="tablist" aria-label="본부 선택"></div>
+  </div>
+
+  <section class="panel" id="panel-main">
+    <div class="panel-row">
+      <div class="sec-head"><span class="bar" aria-hidden="true"></span>링커 선정 현황</div>
+      <span class="unit-note" id="unit-note-summary" aria-hidden="false">(단위:명)</span>
+    </div>
+    <div class="summary-tier-wrap hidden" id="summary-tier-wrap">
+      <table class="hd-table" aria-label="AI링커 직함 기준(현재 구역 합계)">
+        <tbody>
+          <tr>
+            <th class="th-left">책임급</th>
+            <td class="td-center"><span id="summary-tier-sen">0</span>명</td>
+          </tr>
+          <tr>
+            <th class="th-left">매니저급</th>
+            <td class="td-center"><span id="summary-tier-man">0</span>명</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-scroll">
+      <table class="hd-table summary-table" id="table-summary">
+        <colgroup>
+          <col class="col-num"/>
+          <col class="col-dept"/>
+          <col class="col-metric"/><col class="col-metric"/><col class="col-metric"/><col class="col-metric"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th class="th-center">번호</th>
+            <th class="th-left">본부</th>
+            <th class="th-center">ACE</th>
+            <th class="th-center">링커</th>
+            <th class="th-center">선정 완료</th>
+            <th class="th-center">미선정</th>
+          </tr>
+        </thead>
+        <tbody id="summary-body"></tbody>
+        <tfoot>
+          <tr>
+            <th class="th-left" colspan="2" id="summary-foot-label" scope="row">합계</th>
+            <td class="td-center" id="sum-ace">30</td>
+            <td class="td-center" id="sum-linker">365</td>
+            <td class="td-center" id="sum-done">93</td>
+            <td class="td-center" id="sum-pending">272</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="panel-teams">
+    <div class="panel-row">
+      <div class="sec-head"><span class="bar" aria-hidden="true"></span><span id="teams-title">링커 대상 팀</span></div>
+    </div>
+    <div class="team-wrap">
+      <div id="teams-container"></div>
+    </div>
+  </section>
+
+  <p class="footer-note">워크이노베이션센터 AI디자인랩</p>
+</div>
+
+<script>
+(function(){
+  /** 본사 구역 — 하위 배너 고정 순서 */
+  var BONSA_DEPTS = [
+    '토목사업본부',
+    '건축주택사업본부',
+    '플랜트사업본부',
+    'NewEnergy사업부',
+    '안전품질본부',
+    '개발사업부',
+    '글로벌사업부',
+    '기술연구원',
+    'PI본부',
+    '재경본부',
+    '경영지원본부',
+    '전략기획사업부',
+    '감사실',
+    'GBC개발사업단'
+  ];
+  var DOMESTIC_ORDER = [
+    '토목사업본부(국내)',
+    '건축주택사업본부(국내)',
+    '플랜트사업본부(국내)',
+    'NewEnergy사업부(국내)',
+    '개발사업부(국내)'
+  ];
+  var OVERSEAS_ORDER = [
+    '토목사업본부(해외)',
+    '건축주택사업본부(해외)',
+    '플랜트사업본부(해외)',
+    'NewEnergy사업부(해외)'
+  ];
+
+  var SUMMARY_ROWS = [
+    ['토목사업본부',2,19,3,16],
+    ['건축주택사업본부',3,31,10,21],
+    ['플랜트사업본부',2,29,6,23],
+    ['NewEnergy사업부',3,11,3,8],
+    ['안전품질본부',3,19,7,12],
+    ['개발사업부',2,11,4,7],
+    ['글로벌사업부',3,6,1,5],
+    ['기술연구원',2,12,3,9],
+    ['PI본부',2,12,2,10],
+    ['재경본부',3,17,3,14],
+    ['경영지원본부',2,18,6,12],
+    ['전략기획사업부',1,4,3,1],
+    ['감사실',0,3,0,3],
+    ['GBC개발사업단',0,4,1,3],
+    ['토목사업본부(국내)',0,39,6,33],
+    ['건축주택사업본부(국내)',1,79,21,58],
+    ['플랜트사업본부(국내)',0,2,0,2],
+    ['NewEnergy사업부(국내)',0,5,0,5],
+    ['개발사업부(국내)',0,2,0,2],
+    ['토목사업본부(해외)',0,13,4,9],
+    ['건축주택사업본부(해외)',0,7,3,4],
+    ['플랜트사업본부(해외)',1,12,3,9],
+    ['NewEnergy사업부(해외)',0,10,4,6]
+  ];
+
+  /** 링커 현황.xlsx 「링커 대상 팀」 — F열='O' 필터링 후 B·D·E·G 4열만 추출.
+   *  matrix[0]=헤더(['본부','팀명','담당 ACE','AI링커']), 본부 = 인덱스 0. run_linker_extract.py 로 채움 */
+  var linkerExcel = null;
+  var EXCEL_B_COL = 0;
+
+  function loadEmbeddedSummary(){
+    var el = document.getElementById('embed-linker-summary');
+    if(!el) return false;
+    try{
+      var d = JSON.parse(el.value);
+      if(!d.rows || !d.rows.length) return false;
+      var cleaned = d.rows
+        .map(function(r){
+          return [
+            String(r[0] == null ? '' : r[0]).trim(),
+            Number(r[1]) || 0,
+            Number(r[2]) || 0,
+            Number(r[3]) || 0,
+            Number(r[4]) || 0
+          ];
+        })
+        .filter(function(r){ return r[0] !== ''; });
+      if(cleaned.length){
+        SUMMARY_ROWS = cleaned;
+        return true;
+      }
+      return false;
+    } catch(e){
+      return false;
+    }
+  }
+
+  var nav1 = document.getElementById('nav-tier1');
+  var nav2 = document.getElementById('nav-tier2');
+  /** @type {null|'bonsa'|'domestic'|'overseas'} */
+  var navRegion = null;
+  var panelMain = document.getElementById('panel-main');
+  var panelTeams = document.getElementById('panel-teams');
+  var summaryBody = document.getElementById('summary-body');
+  var teamsTitle = document.getElementById('teams-title');
+  var teamsContainer = document.getElementById('teams-container');
+
+  function esc(s){
+    if(s == null) return '';
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  function bonbuAliases(canonical){
+    var set = {};
+    function add(s){
+      if(s != null && s !== '') set[String(s)] = true;
+    }
+    add(canonical);
+    add(canonical.replace('(국내현장)', '(국내)'));
+    add(canonical.replace('(해외현장)', '(해외)'));
+    add(canonical.replace('(국내)', '(국내현장)'));
+    add(canonical.replace('(해외)', '(해외현장)'));
+    return set;
+  }
+
+  function rowMatchesDept(cellVal, deptName){
+    var v = String(cellVal == null ? '' : cellVal).trim();
+    var keys = bonbuAliases(deptName);
+    return Object.prototype.hasOwnProperty.call(keys, v);
+  }
+
+  function loadEmbeddedTeams(){
+    var el = document.getElementById('embed-linker-teams');
+    if(!el) return false;
+    try{
+      var d = JSON.parse(el.value);
+      if(!d.matrix || !d.matrix.length) return false;
+      var matrix = d.matrix.map(function(row){
+        return row.map(function(c){ return c == null ? '' : String(c); });
+      });
+      if(matrix[0] && matrix[0].length > 3) matrix[0][3] = 'AI링커';
+      matrix.slice(1).forEach(function(row){
+        while(row.length < 4) row.push('');
+        if(isPendingLinkerValue(row[3])) row[3] = '본부 협의';
+      });
+      linkerExcel = {
+        matrix: matrix,
+        sheetName: d.sheetName || '링커 대상 팀',
+        fileName: '링커 현황.xlsx'
+      };
+      return true;
+    } catch(e){
+      return false;
+    }
+  }
+
+  function getTeamSource(){
+    if(linkerExcel && linkerExcel.matrix && linkerExcel.matrix.length){
+      var m = linkerExcel.matrix;
+      return {
+        headers: m[0],
+        rows: m.slice(1),
+        bi: EXCEL_B_COL,
+        sheetName: linkerExcel.sheetName,
+        fileName: linkerExcel.fileName
+      };
+    }
+    return null;
+  }
+
+  function hasRowsForDept(deptName){
+    var src = getTeamSource();
+    if(!src) return false;
+    var bi = src.bi;
+    var colCount = src.headers.length;
+    return src.rows.some(function(r){
+      var copy = r.slice();
+      while(copy.length < colCount) copy.push('');
+      return rowMatchesDept(copy[bi], deptName);
+    });
+  }
+
+  function orderedDomesticDepts(){
+    return DOMESTIC_ORDER.filter(hasRowsForDept);
+  }
+
+  function orderedOverseasDepts(){
+    return OVERSEAS_ORDER.filter(hasRowsForDept);
+  }
+
+  function subDeptsForRegion(){
+    if(navRegion === 'bonsa') return BONSA_DEPTS.slice();
+    if(navRegion === 'domestic') return orderedDomesticDepts();
+    if(navRegion === 'overseas') return orderedOverseasDepts();
+    return [];
+  }
+
+  /** 갑지: 구역 미선택 시 전체, 본사/국내/해외 선택 시 해당 2단 배너와 동일 본부만 */
+  function summaryRowsForCurrentRegion(){
+    if(!navRegion) return SUMMARY_ROWS.slice();
+    var map = {};
+    SUMMARY_ROWS.forEach(function(r){
+      map[r[0]] = r;
+    });
+    var order =
+      navRegion === 'bonsa'
+        ? BONSA_DEPTS
+        : navRegion === 'domestic'
+          ? orderedDomesticDepts()
+          : orderedOverseasDepts();
+    return order.map(function(name){
+      return map[name];
+    }).filter(Boolean);
+  }
+
+  /** 링커 대상 팀 시트 행 — 현재 상단 구역(홈=전체, 본사/국내/해외=해당 본부만) */
+  function teamRowsForCurrentRegion(){
+    var src = getTeamSource();
+    if(!src) return [];
+    var bi = src.bi;
+    var colCount = src.headers.length;
+    function pad(r){
+      var copy = r.slice();
+      while(copy.length < colCount) copy.push('');
+      return copy;
+    }
+    if(!navRegion){
+      return src.rows.map(pad);
+    }
+    var order =
+      navRegion === 'bonsa'
+        ? BONSA_DEPTS
+        : navRegion === 'domestic'
+          ? orderedDomesticDepts()
+          : orderedOverseasDepts();
+    return src.rows
+      .filter(function(r){
+        var copy = pad(r);
+        var deptCell = copy[bi];
+        return order.some(function(dname){
+          return rowMatchesDept(deptCell, dname);
+        });
+      })
+      .map(pad);
+  }
+
+  function personKeyFromLabel(segment){
+    var s = String(segment == null ? '' : segment).trim().replace(/\s+/g, '');
+    if(!s) return '';
+    return s.replace(
+      /(책임연구원|매니저|책임|팀장|수석|연구원)$/,
+      ''
+    );
+  }
+
+  function isPendingLinkerValue(value){
+    var s = value == null ? '' : String(value).trim();
+    return s === '' || s === '본부 협의';
+  }
+
+  /** AI링커 열: 팀(행)마다 선정 완료 1 또는 미선정 1 — 셀에 이름이 여러 명이어도 1팀 */
+  function teamSelectionCountsByTeam(filteredRows, linkerCol){
+    var lc = linkerCol == null ? 3 : linkerCol;
+    var done = 0;
+    filteredRows.forEach(function(r){
+      if(!isPendingLinkerValue(r[lc])) done++;
+    });
+    var total = filteredRows.length;
+    return { done: done, pending: total - done };
+  }
+
+  /** AI링커 열만 직함 기준 고유 인원 — 담당 ACE는 집계하지 않음 */
+  function countTierMentionsInTeamRows(matrixRows){
+    var senSet = {};
+    var manSet = {};
+    function add(setObj, k){
+      if(k) setObj[k] = true;
+    }
+    function bump(part){
+      var p = String(part == null ? '' : part).trim();
+      if(!p) return;
+      var key = personKeyFromLabel(p);
+      if(/매니저/.test(p)){
+        add(manSet, key || p);
+        return;
+      }
+      if(/책임연구원|책임|팀장|수석/.test(p)){
+        add(senSet, key || p);
+        return;
+      }
+      if(/연구원/.test(p)){
+        add(manSet, key || p);
+      }
+    }
+    var linkerCol = 3;
+    matrixRows.forEach(function(r){
+      var raw = r[linkerCol] != null ? String(r[linkerCol]) : '';
+      if(isPendingLinkerValue(raw)) return;
+      raw.split(/[,，]/).forEach(bump);
+    });
+    return {
+      sen: Object.keys(senSet).length,
+      man: Object.keys(manSet).length
+    };
+  }
+
+  function sumSummaryMetrics(arr){
+    var ace = 0;
+    var linker = 0;
+    var done = 0;
+    var pending = 0;
+    arr.forEach(function(row){
+      ace += Number(row[1]) || 0;
+      linker += Number(row[2]) || 0;
+      done += Number(row[3]) || 0;
+      pending += Number(row[4]) || 0;
+    });
+    return { ace: ace, linker: linker, done: done, pending: pending };
+  }
+
+  function buildSummaryDataRow(rowNum, row){
+    return (
+      '<tr><td class="td-center">' +
+      esc(String(rowNum)) +
+      '</td><td class="td-left">' +
+      esc(row[0]) +
+      '</td><td class="td-center">' +
+      esc(String(row[1])) +
+      '</td><td class="td-center">' +
+      esc(String(row[2])) +
+      '</td><td class="td-center">' +
+      esc(String(row[3])) +
+      '</td><td class="td-center">' +
+      esc(String(row[4] != null ? row[4] : '')) +
+      '</td></tr>'
+    );
+  }
+
+  function buildSummarySubtotalRow(label, m){
+    return (
+      '<tr class="summary-subtotal">' +
+      '<th class="summary-subtotal-label th-left" colspan="2" scope="row">' +
+      esc(label) +
+      '</th>' +
+      '<td class="td-center">' +
+      esc(String(m.ace)) +
+      '</td><td class="td-center">' +
+      esc(String(m.linker)) +
+      '</td><td class="td-center">' +
+      esc(String(m.done)) +
+      '</td><td class="td-center">' +
+      esc(String(m.pending)) +
+      '</td></tr>'
+    );
+  }
+
+  function renderSummary(){
+    var footLabel = document.getElementById('summary-foot-label');
+    var rows = summaryRowsForCurrentRegion();
+
+    if(navRegion){
+      if(footLabel) footLabel.textContent = '합계';
+      summaryBody.innerHTML = rows
+        .map(function(row, idx){
+          return buildSummaryDataRow(idx + 1, row);
+        })
+        .join('');
+      var sm = sumSummaryMetrics(rows);
+      document.getElementById('sum-ace').textContent = String(sm.ace);
+      document.getElementById('sum-linker').textContent = String(sm.linker);
+      document.getElementById('sum-done').textContent = String(sm.done);
+      document.getElementById('sum-pending').textContent = String(sm.pending);
+    } else {
+      if(footLabel) footLabel.textContent = '종합 합계';
+      var map = {};
+      SUMMARY_ROWS.forEach(function(r){
+        map[r[0]] = r;
+      });
+      var bonsaRows = BONSA_DEPTS.map(function(n){
+        return map[n];
+      }).filter(Boolean);
+      var siteRows = DOMESTIC_ORDER.concat(OVERSEAS_ORDER)
+        .map(function(n){
+          return map[n];
+        })
+        .filter(Boolean);
+
+      var html = [];
+      var rowNum = 0;
+      bonsaRows.forEach(function(row){
+        rowNum++;
+        html.push(buildSummaryDataRow(rowNum, row));
+      });
+      if(bonsaRows.length){
+        html.push(
+          buildSummarySubtotalRow('본사 소계', sumSummaryMetrics(bonsaRows))
+        );
+      }
+
+      siteRows.forEach(function(row){
+        rowNum++;
+        html.push(buildSummaryDataRow(rowNum, row));
+      });
+      if(siteRows.length){
+        html.push(
+          buildSummarySubtotalRow('현장 소계', sumSummaryMetrics(siteRows))
+        );
+      }
+
+      summaryBody.innerHTML = html.join('');
+
+      var total = sumSummaryMetrics(bonsaRows.concat(siteRows));
+      document.getElementById('sum-ace').textContent = String(total.ace);
+      document.getElementById('sum-linker').textContent = String(total.linker);
+      document.getElementById('sum-done').textContent = String(total.done);
+      document.getElementById('sum-pending').textContent = String(total.pending);
+    }
+
+    var footTr = document.querySelector('#table-summary tfoot tr');
+    if(footTr){
+      footTr.classList.toggle('summary-foot-grand', !navRegion);
+    }
+
+    var tierWrap = document.getElementById('summary-tier-wrap');
+    var tierSen = document.getElementById('summary-tier-sen');
+    var tierMan = document.getElementById('summary-tier-man');
+    if(tierWrap && tierSen && tierMan){
+      if(getTeamSource()){
+        tierWrap.classList.remove('hidden');
+        var tiers = countTierMentionsInTeamRows(teamRowsForCurrentRegion());
+        tierSen.textContent = String(tiers.sen);
+        tierMan.textContent = String(tiers.man);
+      } else {
+        tierWrap.classList.add('hidden');
+      }
+    }
+  }
+
+  function renderTier2(){
+    nav2.innerHTML = '';
+    if(!navRegion){
+      nav2.classList.add('hidden');
+      return;
+    }
+    nav2.classList.remove('hidden');
+    subDeptsForRegion().forEach(function(label){
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'top-btn';
+      btn.textContent = label;
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('data-dept', label);
+      btn.setAttribute('aria-selected', 'false');
+      btn.addEventListener('click', function(){
+        setView('dept', label);
+      });
+      nav2.appendChild(btn);
+    });
+  }
+
+  function syncNavButtons(mode, deptName){
+    nav1.querySelectorAll('.top-btn').forEach(function(btn){
+      var isHome = btn.classList.contains('top-btn--home');
+      var rg = btn.getAttribute('data-region');
+      var homeOn = isHome && mode === 'main' && !navRegion;
+      var regionOn = rg && navRegion === rg;
+      var on = homeOn || regionOn;
+      btn.classList.toggle('primary', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    nav2.querySelectorAll('.top-btn').forEach(function(btn){
+      var d = btn.getAttribute('data-dept');
+      var on = mode === 'dept' && d === deptName;
+      btn.classList.toggle('primary', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+  }
+
+  function selectRegion(r){
+    navRegion = r;
+    renderSummary();
+    renderTier2();
+    setView('main', null);
+  }
+
+  function syncUnitNote(mode){
+    var show = mode === 'main';
+    var elS = document.getElementById('unit-note-summary');
+    if(elS){
+      elS.classList.toggle('hidden', !show);
+      elS.setAttribute('aria-hidden', show ? 'false' : 'true');
+    }
+  }
+
+  function setView(mode, deptName){
+    if(mode === 'main'){
+      panelMain.classList.remove('hidden');
+      panelTeams.classList.add('hidden');
+    } else {
+      panelMain.classList.add('hidden');
+      panelTeams.classList.remove('hidden');
+      teamsTitle.textContent = '링커 대상 팀 — ' + deptName;
+      renderTeamTable(deptName);
+    }
+    syncUnitNote(mode);
+    syncNavButtons(mode, deptName);
+  }
+
+  /** 파이썬에서 이미 B·D·E·G만 추출했으므로 그대로 0..3 사용 */
+  var TEAM_COL_IDX = [0, 1, 2, 3];
+  var TEAM_DISPLAY_HEADERS = ['본부', '팀명', '담당 ACE', 'AI링커'];
+  function renderTeamTable(deptName){
+    var src = getTeamSource();
+
+    if(!src){
+      teamsContainer.innerHTML = '';
+      return;
+    }
+
+    var headers = src.headers;
+    var rows = src.rows;
+    var bi = src.bi;
+    var colCount = headers.length;
+
+    var filtered = rows.filter(function(r){
+      var copy = r.slice();
+      while(copy.length < colCount) copy.push('');
+      return rowMatchesDept(copy[bi], deptName);
+    });
+
+    if(!filtered.length){
+      teamsContainer.innerHTML = '';
+      return;
+    }
+
+    /** 링커 대상·선정·미선정은 모두 이 표의 팀(행) 기준. 선정/미선정은 팀 단위(AI링커가 비었거나 본부 협의면 미선정 1팀). */
+    var teamsTarget = filtered.length;
+    var sel = teamSelectionCountsByTeam(filtered, 3);
+    var doneN = sel.done;
+    var pendN = sel.pending;
+    var tiers = countTierMentionsInTeamRows(filtered);
+
+    var miniLeft =
+      '<table class="hd-table" aria-label="팀 기준 요약">' +
+      '<tbody>' +
+      '<tr><th class="th-left">링커 대상 팀</th><td class="td-center">' +
+      esc(String(teamsTarget)) +
+      '</td></tr>' +
+      '<tr><th class="th-left">선정 완료</th><td class="td-center">' +
+      esc(String(doneN)) +
+      '</td></tr>' +
+      '<tr><th class="th-left">미선정</th><td class="td-center">' +
+      esc(String(pendN)) +
+      '</td></tr>' +
+      '</tbody></table>';
+    var miniRight =
+      '<table class="hd-table" aria-label="AI링커 직함 기준 인원">' +
+      '<tbody>' +
+      '<tr><th class="th-left">책임급</th><td class="td-center">' +
+      esc(String(tiers.sen)) +
+      '명</td></tr>' +
+      '<tr><th class="th-left">매니저급</th><td class="td-center">' +
+      esc(String(tiers.man)) +
+      '명</td></tr>' +
+      '</tbody></table>';
+
+    var cg = '<colgroup>' +
+      '<col class="c0"/><col class="c1"/><col class="c2"/><col class="c3"/><col class="c4"/>' +
+      '</colgroup>';
+    var thead =
+      '<thead><tr><th class="th-center">번호</th>' +
+      TEAM_DISPLAY_HEADERS.map(function(h){
+        return '<th>' + esc(h) + '</th>';
+      }).join('') +
+      '</tr></thead>';
+
+    var tbody = '<tbody>' + filtered.map(function(r, idx){
+      var cells = r.slice();
+      while(cells.length < colCount) cells.push('');
+      var out = TEAM_COL_IDX.map(function(j){
+        return cells[j] != null ? cells[j] : '';
+      });
+      var numCell =
+        '<td class="td-center">' + esc(String(idx + 1)) + '</td>';
+      var rest = out.map(function(c, j){
+        var align = j >= 2 ? 'td-center' : 'td-left';
+        var raw = String(c != null ? c : '');
+        if(j === 3 && isPendingLinkerValue(raw)){
+          return '<td class="' + align + ' td-bonbu-hyeobi">' + esc('본부 협의') + '</td>';
+        }
+        return '<td class="' + align + '">' + esc(raw) + '</td>';
+      }).join('');
+      return '<tr>' + numCell + rest + '</tr>';
+    }).join('') + '</tbody>';
+
+    teamsContainer.innerHTML =
+      '<div class="team-mini-stats">' +
+      miniLeft +
+      miniRight +
+      '</div>' +
+      '<table class="hd-table team-table">' +
+      cg +
+      thead +
+      tbody +
+      '</table>';
+  }
+
+  var btnHome = document.createElement('button');
+  btnHome.type = 'button';
+  btnHome.className = 'top-btn top-btn--home';
+  btnHome.textContent = '홈';
+  btnHome.setAttribute('role', 'tab');
+  btnHome.setAttribute('aria-label', '갑지 요약으로 이동');
+  btnHome.setAttribute('aria-selected', 'false');
+  btnHome.addEventListener('click', function(){
+    navRegion = null;
+    renderSummary();
+    renderTier2();
+    setView('main', null);
+  });
+  nav1.appendChild(btnHome);
+
+  [
+    { key: 'bonsa', label: '본사' },
+    { key: 'domestic', label: '국내현장' },
+    { key: 'overseas', label: '해외현장' }
+  ].forEach(function(item){
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'top-btn';
+    btn.textContent = item.label;
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('data-region', item.key);
+    btn.setAttribute('aria-selected', 'false');
+    btn.addEventListener('click', function(){
+      selectRegion(item.key);
+    });
+    nav1.appendChild(btn);
+  });
+
+  loadEmbeddedSummary();
+  loadEmbeddedTeams();
+
+  renderSummary();
+  renderTier2();
+  setView('main', null);
+})();
+</script>
+</body>
+</html>
